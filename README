@@ -1,0 +1,100 @@
+#    Copyright 2012 Merijntje Tak
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, version 3 of the License.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+#
+#   VyattaLookingGlass - Looking glass for the vyatta routing suite
+#
+#   This web frontend is designed to provide looking glass style
+#    functionality for the Vyatta routing suite. It uses SSH to connect
+#    to the Vyatta server and then runs commands on it. The web frontend
+#    is AJAX driven, for a smooth user experience.
+#
+#  Installation:
+#   Create a new user account and keypair and install it on the Vyatta
+#    router;
+#    - $ ssh-keygen -t dsa
+#    - When prompted, save the key somewhere safe 
+#    - View the public key (the one without the .key extension) and copy
+#       the long string to your clipbord. Do not copy the extra
+#       "ssh-dss" and following <username>@<host>.
+#
+#    - Login to your Vyatta router and type the following commands:
+#     - # configure
+#     - # set system user <username> level operator
+#     - # set system user <username> plaintext-password "a password is
+#      required for vyatta, but we're not going to use it, type gibberish"
+#     - # set system user <username> public-keys <username>@<host> key
+#      <paste your key>
+#     - # set system user <username> public-keys <username>@<host> type
+#      ssh-dss
+#     - # commit
+#     - # save
+#
+#   If you have trouble installing the key, refer to the Vyatta
+#    documentation or check the Vyatta forums
+#
+#   Upload the files to your webserver. Perform the following steps:
+#    - Enable CGI in your webserver (Apache: +ExecCGI, check your docs)
+#    - Make the LookingGlass.pl file executable
+#    - Put the private key file (which you create in the first step, with
+#    the .key extension), in a directory that is accessible by the 
+#    webserver, but NOT by remote users (so don't put it in the 
+#    DocumentRoot). If you put the keyfile in a web-accessible directory 
+#    you can compromise your system's security!!!
+#
+#   Update the following variables in the LookingGlass.pm script:
+#    - my $routeserver = 'hostname.or.ip.of.your.vyatta.box';
+#    - my $user = 'username';
+#    - my $keyFile = '/path/to/your/private/key.key'; 
+#
+#   If you installed everything correctly, you should be able to accesst
+#    he looking glass at http://yourwebserver.com/index.html. You can
+#    test the looking glass by performing an nslookup query to for
+#    example, www.example.com
+#
+#  Usage:
+#   The looking glass provides a couple of functions. You can use it to
+#    perform the following queries;
+#    - BGP; this performs an 'show ip bgp $argument' command
+#    - Traceroute; this does a traceroute the $argument ip
+#    - Ping; this pings the $argument ip
+#    - nslookup; does a dig to the $argument hostname
+#    - AS; performs a 'show ip bgp regexp $argument' command
+#
+#  Dependencies/prerequisites:
+#    - The client needs Javascript enabled
+#    - Perl modules:
+#     * CGI::Carp (apt-get install libcgi-pm-perl)
+#     * CGI::Application (apt-get install libcgi-application-perl)
+#   
+#  Hacking:
+#    - The title and header of the page can be easily edited to show
+#     your own text. Edit the strings at line 21 and 72. You can use the
+#     <h1> tag for big letters.
+#
+#    - In the LookingGlass.css file, you can change the background and
+#    box colors. Look for #888888 for the background and for #bobfbe for
+#    the box color. The box color is set multiple times!
+#
+#    - If you're a perl monk, you can also add your own function to the
+#     LookingGlass application:
+#     - The runmode is set by the qt POST variable. The POST variable is
+#      set by the radio buttons in the HTML page.
+#     - You can add another runmode to the LG around line 43
+#     - If you need an IP address as input, use the ipLookupArg function
+#     - If you need a hostname as input, use the getArg function
+#     - You can use the runSsh() function to run the command
+#     - Make sure your runmode returns the text you want displayed in
+#      the #output box

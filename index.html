@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--
+   VyattaLookingGlass v0.1 - Looking glass for the vyatta routing suite
+
+    Copyright 2012 Merijntje Tak
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<html>
+  <head>
+    <title>LookingGlass</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="LookingGlass.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <script src="jquery-1.7.1.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $.ajaxSetup({ cache: false });
+
+      $(document).ready(function(){
+
+        // Set focus on textbox on page load
+        $('input:text[name=argBox]').focus();
+
+        // Press lookup button on enter
+        $(document).keyup(function(event){
+          if(event.keyCode == 13){
+            $("#submit").click();
+          }
+        });
+
+        // AJAX busy indicator
+        $(document).ajaxStart(function(){ 
+          $("#submit").attr('disabled', true);
+          $('#output').hide();
+          $('#loadBox').show(); 
+        }).ajaxStop(function(){ 
+          $('#loadBox').hide();
+          $('#output').show();
+          $("#submit").attr('disabled', false);
+        });
+
+        // AJAX stuff
+        $("#submit").click(function(){
+
+          var lgQt = $('input:radio[name=qt]:checked').val();
+          var lgArg = $('input:text[name=argBox]').val();
+
+          $.post("LookingGlass.pl", { arg: lgArg, qt: lgQt },
+            function(data){
+              $("#output").html(data);
+            }
+          );
+
+          return false;
+        });
+      });
+    </script>
+
+    <div id="mainBox">
+      <div id="titleBox">
+        <h1>LookingGlass</h1>
+        AS64512 - myISPname
+      </div>
+      <div id="queryBox">
+        <label><input type="radio" name="qt" value="bgp" checked="checked">BGP</label>
+        <label><input type="radio" name="qt" value="trace">Traceroute</label>
+        <label><input type="radio" name="qt" value="ping">Ping</label>
+        <label><input type="radio" name="qt" value="dig">nslookup</label>
+        <label><input type="radio" name="qt" value="as">AS</label>
+        <br>
+        <input type="text" name="argBox" value="" id="argBox">
+        <button id="submit">Lookup</button>
+      </div>
+  
+      <div id="loadBox">
+          Performing query, please wait...<br>
+        <img src="loading.gif" alt="loading icon">
+      </div>
+
+      <div id="output"></div>
+
+    </div>
+  </body>
+</html>
