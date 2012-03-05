@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--
-   VyattaLookingGlass v0.1 - Looking glass for the vyatta routing suite
+   VyattaLookingGlass v0.2 - Looking glass for the vyatta routing suite
 
     Copyright 2012 Merijntje Tak
 
@@ -50,7 +50,7 @@
           $("#submit").attr('disabled', false);
         });
 
-        // AJAX stuff
+        // AJAX stuff for query part
         $("#submit").click(function(){
 
           var lgQt = $('input:radio[name=qt]:checked').val();
@@ -64,6 +64,30 @@
 
           return false;
         });
+
+        // AJAX stuff for fixed buttons
+        $("#bgpNeig").click(function(){
+
+          $.post("LookingGlass.pl", { qt: "bgpNeig" },
+            function(data){
+              $("#output").html(data);
+            }
+          );
+
+          return false;
+        });
+
+        $("#routeTab").click(function(){
+
+          $.post("LookingGlass.pl", { qt: "routeTab" },
+            function(data){
+              $("#output").html(data);
+            }
+          );
+
+          return false;
+        });
+      
       });
     </script>
 
@@ -81,6 +105,9 @@
         <br>
         <input type="text" name="argBox" value="" id="argBox">
         <button id="submit">Lookup</button>
+        <hr>
+        <button id="bgpNeig">BGP neighbours</button>
+        <button id="routeTab">Full routing table</button>
       </div>
   
       <div id="loadBox">

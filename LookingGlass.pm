@@ -44,7 +44,9 @@ sub setup {
     'trace'         => 'traceQuery',
     'ping'          => 'pingQuery',
     'dig'           => 'digQuery',
-    'as'            => 'asQuery'
+    'as'            => 'asQuery',
+    'bgpNeig'       => 'bgpNeighboursQuery',
+    'routeTab'      => 'routeTableQuery'
   );
   $self->start_mode('default');
   $self->mode_param('qt');
@@ -80,16 +82,55 @@ $)
 /x;
 
 #
+# routeTableQuery - Get the complete BGP routing table
+# Input: -
+# Output: Output of show ip route 
+#
+sub routeTableQuery {
+  my $output;
+
+  my $command = qq#/usr/bin/vtysh -c \'show ip route\'#;
+  $output .= runSsh($command);
+
+  return($output);
+
+}
+
+#
+# bgpNeighboursQuery - Get a summary of all BGP neighbours
+# Input: -
+# Output: Output of show ip bgp summary
+#
+sub bgpNeighboursQuery {
+  my $output;
+
+  my $command = qq#/usr/bin/vtysh -c \'show ip bgp summary\'#;
+  $output .= runSsh($command);
+
+  return($output);
+
+}
+
+#
 # digQuery - Perform a dig request on the provided parameter
 # Input: Sanatized input from getArg (from CGI::Application param('arg'))
 # Output: Flat text for AJAX retrieval
 #
 sub digQuery {
   my $self = shift;
+  my $output;
   my $argument = getArg($self);
+  if ( $argument eq "invalid" ) {
+    $output .= "Error: Invalid input";
+    return($output);
+  }
 
   my $command = qq#/usr/bin/host -a $argument#;
-  my $output .= runSsh($command);
+  $output .= runSsh($command);
+
+  if ( length($output) < 2 ) {
+    $output .= "No results found.";
+  }
 
   return($output);
 
@@ -108,6 +149,10 @@ sub pingQuery {
   my $command = qq#/bin/ping -c4 -A -w4 -n -- $ip#;
   my $output .= runSsh($command);
 
+  if ( length($output) < 2 ) {
+    $output .= "No results found.";
+  }
+
   return($output);
 
 }
@@ -125,6 +170,10 @@ sub traceQuery {
   my $command = qq#/usr/sbin/traceroute -n -q1 -w3 $ip#;
   my $output .= runSsh($command);
 
+  if ( length($output) < 2 ) {
+    $output .= "No results found.";
+  }
+
   return($output);
 
 }
@@ -141,6 +190,10 @@ sub bgpQuery {
 
   my $command = qq#/usr/bin/vtysh -c \'show ip bgp $ip\'#;
   my $output .= runSsh($command);
+
+  if ( length($output) < 2 ) {
+    $output .= "No results found.";
+  }
 
   return($output);
 
@@ -163,13 +216,19 @@ sub asQuery {
   if ( $raw =~ m/([0-9]{5})/ ) {
     $as = $1;
     chomp($as);
-
-    my $command = qq#/usr/bin/vtysh -c \'show ip bgp regexp $as\'#;
-    $output .= runSsh($command);
-
   } else {
     $output .= "Error: Invalid AS number";
+    return($output);
   }
+
+  my $command = qq#/usr/bin/vtysh -c \'show ip bgp regexp $as \'#;
+  $output .= runSsh($command);
+
+  if ( length($output) < 2 ) {
+    $output .= "No results found.";
+  }
+
+  return($output);
 
 }
 
