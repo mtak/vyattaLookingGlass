@@ -18,7 +18,7 @@
 
 
 body {
-  background-color: #888888;
+  background-color: #ffffff;
 }
 
 h1 {
@@ -57,7 +57,7 @@ hr {
   border-radius: 10px;
   -moz-border-radius: 10px;
   white-space: pre-wrap;
-  background-color: #b0bfbe;
+  background-color: #dddddd;
 }
 
 #loadBox {
@@ -70,7 +70,7 @@ hr {
   border: 2px solid;
   border-radius: 10px;
   -moz-border-radius: 10px;
-  background-color: #b0bfbe;
+  background-color: #dddddd;
 }
 
 #queryBox {
@@ -81,7 +81,7 @@ hr {
   -moz-border-radius: 10px;
   text-align: center;
   margin-bottom: 10px;
-  background-color: #b0bfbe;
+  background-color: #dddddd;
 }
 
 #titleBox {
@@ -91,6 +91,5 @@ hr {
   -moz-border-radius: 10px;
   text-align: center;
   margin-bottom: 10px;
-  background-color: #b0bfbe;
+  background-color: #dddddd;
 }
-

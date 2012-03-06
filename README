@@ -115,3 +115,8 @@
 #     - You can use the runSsh() function to run the command
 #     - Make sure your runmode returns the text you want displayed in
 #      the #output box
+#
+#    - If you are running a big router, you might want to remove one of 
+#     the bottom buttons. You can remove the button in the html, and 
+#     delete the runmode associated with the button in LookingGlass.pm
+#
