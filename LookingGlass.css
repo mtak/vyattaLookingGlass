@@ -66,7 +66,7 @@ hr {
   margin-left: auto;
   margin-right: auto;
   padding-top: 20px;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
   border: 2px solid;
   border-radius: 10px;
   -moz-border-radius: 10px;
@@ -93,3 +93,14 @@ hr {
   margin-bottom: 10px;
   background-color: #dddddd;
 }
+
+#creditBox {
+  text-align: center;
+  font-size: 10px;
+  color: #666666;
+}
+
+A.creditLink:link    { color: #666666; }
+A.creditLink:visited { color: #666666; }
+A.creditLink:active  { color: #999999; }
+A.creditLink:hover   { color: #999999; }
