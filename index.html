@@ -76,6 +76,17 @@
 
           return false;
         });
+        
+        $("#ip6bgpNeig").click(function(){
+
+          $.post("LookingGlass.pl", { qt: "ip6bgpNeig" },
+            function(data){
+              $("#output").html(data);
+            }
+          );
+
+          return false;
+        });
 
         $("#routeTab").click(function(){
 
@@ -94,20 +105,24 @@
     <div id="mainBox">
       <div id="titleBox">
         <h1>LookingGlass</h1>
-        AS64512 - myISPname
+        AS196621 - FreeStone Systems
       </div>
       <div id="queryBox">
         <label><input type="radio" name="qt" value="bgp" checked="checked">BGP</label>
+        <label><input type="radio" name="qt" value="ip6bgp" checked="checked">IPv6 BGP</label>
         <label><input type="radio" name="qt" value="trace">Traceroute</label>
         <label><input type="radio" name="qt" value="ping">Ping</label>
         <label><input type="radio" name="qt" value="dig">nslookup</label>
         <label><input type="radio" name="qt" value="as">AS</label>
+        <label><input type="radio" name="qt" value="ip6as">IPv6 AS</label>
+         
         <br>
         <input type="text" name="argBox" value="" id="argBox">
         <button id="submit">Lookup</button>
         <hr>
         <button id="bgpNeig">BGP neighbours</button>
-        <button id="routeTab">Full routing table</button>
+        <button id="ip6bgpNeig">IPv6 BGP neighbours</button>
+<!--        <button id="routeTab">Full routing table</button> -->
       </div>
   
       <div id="loadBox">
