@@ -23,13 +23,13 @@ use base 'CGI::Application';
 use Socket;
 use strict;
 
-#############################################################
-# Edit these values
-my $routeServer = 'bluepill.freestone.net';
-my $user = 'lg';
-my $keyFile = '/webhome/lg.freestone.net/keys/id_dsa';
-#############################################################
+use lib './';
+use LGConfig;
 
+my %config=LGConfig::lg_config();
+my $routeServer = $config{'routeServer'};
+my $user = $config{'user'};
+my $keyFile = $config{'keyFile'};
 
 #
 # setup - Setup the CGI::Application framework
@@ -298,8 +298,6 @@ sub ip6asQuery {
   return($output);
 
 }
-
-
 
 # 
 # ipLookupArg - Resolve raw input to an IP address

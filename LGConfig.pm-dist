@@ -1,0 +1,15 @@
+package LGConfig;
+use strict;
+
+sub lg_config {
+  my %config;
+  #############################################################
+  # Edit these values
+  $config{'routeServer'} = '';
+  $config{'user'} = '';
+  $config{'keyFile'} = '';
+  #############################################################
+  return(%config);
+}
+
+1;
