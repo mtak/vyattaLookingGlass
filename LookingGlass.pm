@@ -360,7 +360,7 @@ sub getArg {
   my $raw = $cgi->param('arg');
   my $san;
 
-  if ( $raw =~ m/([A-Za-z0-9\.\-]+)/ ) {
+  if ( $raw =~ m/([A-Za-z0-9\.\-\:\/]+)/ ) {
     $san = $1;
   } else {
     $san = "invalid"
