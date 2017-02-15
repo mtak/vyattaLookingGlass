@@ -23,13 +23,13 @@ use base 'CGI::Application';
 use Socket;
 use strict;
 
-#############################################################
-# Edit these values
-my $routeServer = '';
-my $user = '';
-my $keyFile = '';
-#############################################################
+use lib './';
+use LGConfig;
 
+my %config=LGConfig::lg_config();
+my $routeServer = $config{'routeServer'};
+my $user = $config{'user'};
+my $keyFile = $config{'keyFile'};
 
 #
 # setup - Setup the CGI::Application framework
@@ -46,7 +46,11 @@ sub setup {
     'dig'           => 'digQuery',
     'as'            => 'asQuery',
     'bgpNeig'       => 'bgpNeighboursQuery',
-    'routeTab'      => 'routeTableQuery'
+    'routeTab'      => 'routeTableQuery',
+    'ip6as'         => 'ip6asQuery',
+    'ip6bgpNeig'    => 'ip6bgpNeighboursQuery',
+    'ip6bgp'        => 'ip6bgpQuery',
+    
   );
   $self->start_mode('default');
   $self->mode_param('qt');
@@ -110,6 +114,17 @@ sub bgpNeighboursQuery {
   return($output);
 
 }
+
+sub ip6bgpNeighboursQuery {
+  my $output;
+
+  my $command = qq#/usr/bin/vtysh -c \'show ipv6 bgp summary\'#;
+  $output .= runSsh($command);
+
+  return($output);
+
+}
+
 
 #
 # digQuery - Perform a dig request on the provided parameter
@@ -199,6 +214,26 @@ sub bgpQuery {
 
 }
 
+#
+# ip6bgpQuery - Query Vyatta BGP table for route information
+# Input: IP from ipLookupArg (from CGI::Application param('arg'))
+# Output: Flat text for AJAX retrieval
+#
+sub ip6bgpQuery {
+  my $self = shift;
+  my $ip = getArg($self);
+
+  my $command = qq#/usr/bin/vtysh -c \'show ipv6 bgp $ip\'#;
+  my $output .= runSsh($command);
+
+  if ( length($output) < 2 ) {
+    $output .= "No results found.";
+  }
+
+  return($output);
+
+}
+
 
 #
 # asQuery - Show all paths with an AS in them
@@ -213,7 +248,7 @@ sub asQuery {
   my $output;
 
   my $raw = $cgi->param('arg');
-  if ( $raw =~ m/([0-9]{5})/ ) {
+  if ( $raw =~ m/([0-9_\$\^]*)/ ) {
     $as = $1;
     chomp($as);
   } else {
@@ -232,6 +267,37 @@ sub asQuery {
 
 }
 
+#
+# ip6asQuery - Show all paths with an AS in them
+# Input: Input from CGI::Application param('arg')
+# Output: Flat text for AJAX retrieval
+#
+sub ip6asQuery {
+  my $self = shift;
+  my $cgi = $self->query();
+  my $as;
+
+  my $output;
+
+  my $raw = $cgi->param('arg');
+  if ( $raw =~ m/([0-9_\$\^]*)/ ) {
+    $as = $1;
+    chomp($as);
+  } else {
+    $output .= "Error: Invalid AS number";
+    return($output);
+  }
+
+  my $command = qq#/usr/bin/vtysh -c \'show ipv6 bgp regexp $as \'#;
+  $output .= runSsh($command);
+
+  if ( length($output) < 2 ) {
+    $output .= "No results found.";
+  }
+
+  return($output);
+
+}
 
 # 
 # ipLookupArg - Resolve raw input to an IP address
@@ -294,7 +360,7 @@ sub getArg {
   my $raw = $cgi->param('arg');
   my $san;
 
-  if ( $raw =~ m/([A-Za-z0-9\.\-]+)/ ) {
+  if ( $raw =~ m/([A-Za-z0-9\.\-\:\/]+)/ ) {
     $san = $1;
   } else {
     $san = "invalid"

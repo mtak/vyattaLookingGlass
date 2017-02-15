@@ -32,12 +32,12 @@
 #
 #    - Login to your Vyatta router and type the following commands:
 #     - # configure
-#     - # set system user <username> level operator
-#     - # set system user <username> plaintext-password "a password is
-#      required for vyatta, but we're not going to use it, type gibberish"
-#     - # set system user <username> public-keys <username>@<host> key
+#     - # set system login user <username> level operator
+#     - # set system login user <username> plaintext-password "a password is
+#      required for vyos, but we're not going to use it, type gibberish"
+#     - # set system login user <username> public-keys <username>@<host> key
 #      <paste your key>
-#     - # set system user <username> public-keys <username>@<host> type
+#     - # set system login user <username> public-keys <username>@<host> type
 #      ssh-dss
 #     - # commit
 #     - # save
@@ -54,10 +54,11 @@
 #    DocumentRoot). If you put the keyfile in a web-accessible directory 
 #    you can compromise your system's security!!!
 #
-#   Update the following variables in the LookingGlass.pm script:
-#    - my $routeserver = 'hostname.or.ip.of.your.vyatta.box';
-#    - my $user = 'username';
-#    - my $keyFile = '/path/to/your/private/key.key'; 
+#   Copy the file LGConfig.pm-dist to LGConfig.pm
+#   Update the following variables in the LGConfig.pm file:
+#    - routeserver = 'hostname.or.ip.of.your.vyatta.box';
+#    - user = 'username';
+#    - keyFile = '/path/to/your/private/key.key'; 
 #
 #   If you installed everything correctly, you should be able to accesst
 #    he looking glass at http://yourwebserver.com/index.html. You can
